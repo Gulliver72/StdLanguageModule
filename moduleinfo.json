@@ -1,0 +1,24 @@
+{
+    "name": "Standard Sprachen Modul für Modified",
+    "archiveName": "gulliver72/modified-std-language-module",
+    "sourceDir": "new_files",
+    "version": "auto",
+
+    "shortDescription": "Standard Sprachen Modul für Modified",
+    "description": "Standard Sprachen Modul für Modified",
+
+    "developer": "Bert Funke",
+    "developerWebsite": "https://bert-funke.de",
+    "website": "https://bert-funke.de",
+
+    "require": {
+        "composer/autoload": "^1.0.0"
+    },
+
+    "category": "library",
+    "price": "free",
+
+    "modifiedCompatibility": [
+        "2.0.5.1"
+    ],
+}
