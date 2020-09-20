@@ -24,7 +24,7 @@ class StdLanguageModule
         }
     }
 
-    protected function checkLanguageIsSet()
+    protected function checkLanguageIsSet(): bool
     {
         $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '$this->code'");
         $res = xtc_db_num_rows($query);
