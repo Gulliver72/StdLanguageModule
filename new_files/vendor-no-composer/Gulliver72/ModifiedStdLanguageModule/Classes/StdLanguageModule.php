@@ -12,7 +12,7 @@ class StdLanguageModule
     {
 
         $this->languagesId = '';
-        $this->code = $data['code'];
+        $this->code = strtolower($data['code']);
         $this->lngID_from = $lngID_from;
         $this->data = $data;
 
