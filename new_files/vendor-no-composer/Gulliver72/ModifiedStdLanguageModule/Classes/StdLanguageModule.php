@@ -50,16 +50,16 @@ class StdLanguageModule
 
     protected function createLanguage()
     {
-        $name = $this->data['name'];
-        $code = $this->data['code'];
-        $image = $this->data['image'];
-        $directory = $this->data['directory'];
-        $sort_order = $this->data['sort_order'];
-        $language_charset = $this->data['language_charset'];
+        $name = $this->data['name'] ?? '';
+        $code = $this->code;
+        $image = $this->data['image'] ?? '';
+        $directory = $this->data['directory'] ?? '';
+        $sort_order = $this->data['sort_order'] ?? '';
+        $language_charset = $this->data['language_charset'] ?? '';
         $status = 0;
         $status_admin = 0;
 
-        xtc_db_query("INSERT INTO `" . TABLE_LANGUAGES . "` (`name`, `code`, `image`, `directory`, `sort_order`, `language_charset`, `status`, `status_admin`) VALUES ('$name', '$code', '$image', '$directory', '$sort_order', '$language_charset', '$status', '$status_admin')");
+        xtc_db_query("INSERT INTO " . TABLE_LANGUAGES . " (name, code, image, directory, sort_order, language_charset, status, status_admin) VALUES ('$name', '$code', '$image', '$directory', '$sort_order', '$language_charset', '$status', '$status_admin')");
 
         $this->languagesId = xtc_db_insert_id();
     }
