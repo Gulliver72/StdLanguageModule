@@ -22,6 +22,27 @@ class StdLanguageModule
         }
     }
 
+    /**
+     * Delete all data for given languages_id
+     *
+     * @param string $languagesId
+     * @return void
+     */
+    public function deleteLanguage($languagesId)
+    {
+        xtc_db_query("DELETE FROM " . TABLE_LANGUAGES . " WHERE languages_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_MANUFACTURERS_INFO . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_ORDERS_STATUS . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_SHIPPING_STATUS . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_XSELL_GROUPS . " WHERE language_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_CONTENT_MANAGER . " WHERE languages_id = '" . $languagesId . "'");
+        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_CONTENT . " WHERE languages_id = '" . $languagesId . "'");
+    }
+
     protected function checkLanguageIsSet(): bool
     {
         $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '$this->code'");
