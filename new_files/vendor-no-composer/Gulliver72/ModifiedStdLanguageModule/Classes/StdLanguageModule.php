@@ -70,7 +70,7 @@ class StdLanguageModule
 
     protected function checkLanguageIsSet(): bool
     {
-        $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '$this->code'");
+        $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '" . xtc_db_input($this->code) . "'");
         $res = xtc_db_num_rows($query);
 
         return ($res > 0);
@@ -270,7 +270,7 @@ class StdLanguageModule
         $languages_id_query = xtc_db_query("select languages_id from " . TABLE_LANGUAGES . " where code = '" . xtc_db_input($this->code) . "'");
         $languages_id = xtc_db_fetch_array($languages_id_query);
         
-        return $languages_id['languages_id'];
+        return (!empty($languages_id['languages_id']) ? $languages_id['languages_id'] : '');
     }
     
     protected function checkDefaultLanguage()
@@ -287,5 +287,6 @@ class StdLanguageModule
         $this->code = '';
         $this->lngID_from = '';
         $this->data = '';
+        $this->isStandard = false;
     }
 }
