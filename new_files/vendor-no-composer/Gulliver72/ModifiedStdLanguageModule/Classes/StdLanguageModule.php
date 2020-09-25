@@ -7,6 +7,7 @@ class StdLanguageModule
     protected $data;
     protected $lngID_from;
     protected $languagesId;
+    protected $isStandard;
 
     public function init(array $data, int $lngID_from)
     {
@@ -15,11 +16,32 @@ class StdLanguageModule
         $this->code = strtolower($data['code']);
         $this->lngID_from = $lngID_from;
         $this->data = $data;
+        $this->isStandard = false;
 
         if ($this->checkLanguageIsSet($this->code) === false)
         {
             $this->setLanguage();
         }
+    }
+    
+    /**
+     * needed function for workflow delete language
+     *
+     * @param string $code
+     * @return void
+     */
+    public function setLanguageIdByCode(string $code)
+    {
+        $this->reset();
+        $this->code = strtolower($code);
+        $this->isStandard = false;
+        $this->languagesId = $this->getLanguagesIdByCode();
+        if ($this->languagesId != '') $this->checkDefaultLanguage();
+    }
+    
+    public function getIsStandard()
+    {
+        return $this->isStandard;
     }
 
     /**
@@ -28,24 +50,27 @@ class StdLanguageModule
      * @param string $languagesId
      * @return void
      */
-    public function deleteLanguage($languagesId)
+    public function deleteLanguage()
     {
-        xtc_db_query("DELETE FROM " . TABLE_LANGUAGES . " WHERE languages_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_MANUFACTURERS_INFO . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_ORDERS_STATUS . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_SHIPPING_STATUS . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_XSELL_GROUPS . " WHERE language_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_CONTENT_MANAGER . " WHERE languages_id = '" . $languagesId . "'");
-        xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_CONTENT . " WHERE languages_id = '" . $languagesId . "'");
+        if ($this->languagesId != '')
+        {
+            xtc_db_query("DELETE FROM " . TABLE_LANGUAGES . " WHERE languages_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_CATEGORIES_DESCRIPTION . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_DESCRIPTION . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_OPTIONS_VALUES . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_MANUFACTURERS_INFO . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_ORDERS_STATUS . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_SHIPPING_STATUS . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_XSELL_GROUPS . " WHERE language_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_CONTENT_MANAGER . " WHERE languages_id = '" . (int)$this->languagesId . "'");
+            xtc_db_query("DELETE FROM " . TABLE_PRODUCTS_CONTENT . " WHERE languages_id = '" . (int)$this->languagesId . "'");
+        }
     }
 
     protected function checkLanguageIsSet(): bool
     {
-        $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '$this->code'");
+        $query = xtc_db_query("SELECT languages_id FROM " . TABLE_LANGUAGES . " WHERE code = '" . xtc_db_input($this->code) . "'");
         $res = xtc_db_num_rows($query);
 
         return ($res > 0);
@@ -238,5 +263,30 @@ class StdLanguageModule
 
             xtc_db_perform(TABLE_PRODUCTS_CONTENT, $sql_data_array);
         }
+    }
+    
+    protected function getLanguagesIdByCode():int
+    {
+        $languages_id_query = xtc_db_query("select languages_id from " . TABLE_LANGUAGES . " where code = '" . xtc_db_input($this->code) . "'");
+        $languages_id = xtc_db_fetch_array($languages_id_query);
+        
+        return (!empty($languages_id['languages_id']) ? $languages_id['languages_id'] : '');
+    }
+    
+    protected function checkDefaultLanguage()
+    {
+        if (defined('DEFAULT_LANGUAGE') && DEFAULT_LANGUAGE == $this->code)
+        {
+            $this->isStandard = true;
+        }
+    }
+    
+    protected function reset()
+    {
+        $this->languagesId = '';
+        $this->code = '';
+        $this->lngID_from = '';
+        $this->data = '';
+        $this->isStandard = false;
     }
 }
